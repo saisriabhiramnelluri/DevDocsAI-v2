@@ -138,7 +138,6 @@ cp .env.example .env
 uvicorn main:app --reload --port 8000
 ```
 - API available at `http://localhost:8000`
-- Swagger documentation at `http://localhost:8000/docs`
 
 ### 2. Frontend Setup
 
