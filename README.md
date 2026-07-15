@@ -159,19 +159,6 @@ npm run dev
 
 ---
 
-## Documentation
-
-Detailed documentation for each module can be found in the `/docs` directory:
-- [Backend Core](docs/README_BACKEND_CORE.md)
-- [Analysis Pipeline](docs/README_PIPELINE.md)
-- [Chat Engine](docs/README_CHAT_ENGINE.md)
-- [AI Generators](docs/README_GENERATORS.md)
-- [Frontend UI](docs/README_FRONTEND.md)
-- [Deployment](docs/README_DEPLOYMENT.md)
-- [Architecture](docs/README_V2_ARCHITECTURE.md)
-
----
-
 ## License
 
 This project is licensed under the MIT License — see the LICENSE file for details.
