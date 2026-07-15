@@ -1,0 +1,84 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# DevDocsAI — Render.com Deployment Configuration
+# Docs: https://render.com/docs/render-yaml
+#
+# Deploy steps:
+# 1. Push this repo to GitHub
+# 2. Go to render.com → New → Blueprint
+# 3. Connect your GitHub repo — Render reads this file automatically
+# 4. Set environment variables in Render dashboard (see .env.example)
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+  # ── Backend API ─────────────────────────────────────────────────────────────
+  - type: web
+    name: devdocsai-backend
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT --workers 1
+    plan: free
+
+    healthCheckPath: /health
+
+    envVars:
+      # ── Required — set these in the Render dashboard ──
+      - key: LLM_API_KEY
+        sync: false          # Must be set manually in dashboard
+      - key: SECRET_KEY
+        generateValue: true  # Render auto-generates a secure random value
+      - key: DATABASE_URL
+        sync: false          # Set to your Supabase PostgreSQL URL
+
+      # ── Application defaults ──
+      - key: APP_NAME
+        value: DevDocsAI
+      - key: ENVIRONMENT
+        value: production
+      - key: DEBUG
+        value: "false"
+      - key: API_V1_PREFIX
+        value: /api/v1
+
+      # ── LLM ──
+      - key: LLM_BASE_URL
+        value: https://api.deepseek.com
+      - key: LLM_MODEL
+        value: deepseek-chat
+      - key: LLM_MAX_TOKENS
+        value: "4096"
+      - key: LLM_TEMPERATURE
+        value: "0.1"
+
+      # ── Storage (ephemeral on free tier) ──
+      - key: REPO_CLONE_DIR
+        value: /tmp/devdocsai_repos
+      - key: CHROMA_PERSIST_DIR
+        value: /tmp/chroma_data
+      - key: MAX_REPO_SIZE_MB
+        value: "300"
+
+      # ── Embedding (reduced batch for 512MB RAM) ──
+      - key: EMBEDDING_MODEL
+        value: BAAI/bge-large-en-v1.5
+      - key: EMBEDDING_BATCH_SIZE
+        value: "16"
+      - key: EMBEDDING_DEVICE
+        value: cpu
+
+      # ── CORS — update with your Vercel URL ──
+      - key: ALLOWED_ORIGINS
+        value: https://devdocsai.vercel.app,http://localhost:5173
+
+      # ── Optional GitHub token ──
+      - key: GITHUB_TOKEN
+        sync: false
+
+      # ── Retrieval ──
+      - key: RETRIEVAL_TOP_K
+        value: "50"
+      - key: RERANKER_TOP_K
+        value: "10"
+
+    # Auto-deploy on push to main
+    autoDeploy: true
